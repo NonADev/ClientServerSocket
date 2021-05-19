@@ -15,25 +15,21 @@ public class Client {
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         Socket servidor = new Socket("localhost", 8099);
+
+        DataInputStream in = new DataInputStream(servidor.getInputStream());
         DataOutputStream out = new DataOutputStream(servidor.getOutputStream());
 
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
-
         out.writeByte(1);
-        md5.update("wesley".getBytes());
-        out.writeUTF(Md5ToString(md5.digest()));
+        out.writeUTF("wesley");
 
         out.writeByte(2);
-        md5.update("password".getBytes());
-        out.writeUTF(Md5ToString(md5.digest()));
+        out.writeUTF("qwe123QWE!@#");
 
         out.writeByte(3);
         out.writeUTF("2+3");
 
         out.writeByte(-1);
         out.flush();
-
-        DataInputStream in = new DataInputStream(servidor.getInputStream());
 
         boolean done = false;
         while (!done) {
@@ -45,7 +41,7 @@ public class Client {
                     System.out.println("Token:: "+in.readUTF());
                     break;
                 case 3:
-                    System.out.println("Resultado Equação:: "+in.readDouble());
+                    System.out.println("Resultado Equação:: "+in.readUTF());
                     break;
 
                 case -1:
