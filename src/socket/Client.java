@@ -26,7 +26,7 @@ public class Client {
         out.writeUTF("qwe123QWE!@#");
 
         out.writeByte(3);
-        out.writeUTF("2+3");
+        out.writeUTF("2-3");
 
         out.writeByte(-1);
         out.flush();
@@ -35,7 +35,12 @@ public class Client {
         while (!done) {
             switch (in.readByte()) {
                 case 1:
-                    System.out.println("Usuario Presente:: "+in.readBoolean());
+                    Boolean a = in.readBoolean();
+                    System.out.println("Usuario Presente:: "+a);
+                    if (!a) {
+                        servidor.close();
+                        return;
+                    }
                     break;
                 case 2:
                     System.out.println("Token:: "+in.readUTF());
