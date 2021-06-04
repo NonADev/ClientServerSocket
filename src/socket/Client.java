@@ -23,7 +23,7 @@ public class Client {
         out.writeUTF("wesley");
 
         out.writeByte(2);
-        out.writeUTF("qwe123QWE!@#");
+        out.writeUTF("qwe");
 
         out.writeByte(3);
         out.writeUTF("2-3");

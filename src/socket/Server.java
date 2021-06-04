@@ -9,25 +9,18 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Server {
-    private static List<Usuario> usuarios = new ArrayList<>();
+    private static Map<String, String> usuarios = new HashMap<String, String>();
 
     private static void popularUsuarios() {
-        usuarios.add(new Usuario("wesley", "qwe123QWE!@#"));
-        usuarios.add(new Usuario("teste", "qwe"));
+        usuarios.put("wesley", "qwe123QWE!@#");
+        usuarios.put("wes", "qwe");
     }
 
     private static boolean usuarioPresente(Usuario usuario) {
-        for (Usuario u : usuarios) {
-            if (u.usuario.equals(usuario.usuario) && u.senha.equals(usuario.senha)) {
-                return true;
-            }
-        }
-        return false;
+        return usuarios.get(usuario.usuario).equals(usuario.senha);
     }
 
     public static void main(String[] args) throws IOException, ScriptException {
@@ -43,20 +36,6 @@ public class Server {
 
         boolean done = false;
         while (!done) {
-            if (chamadaDTO.usuario != null && chamadaDTO.senha != null) {
-                if (!usuarioPresente(chamadaDTO)) {
-                    out.writeByte(1);
-                    out.writeBoolean(false);
-
-                    out.writeByte(-1);
-                    out.flush();
-
-                    client.close();
-                    server.close();
-                    return;
-                }
-            }
-
             switch (in.readByte()) {
                 case 1 -> {
                     chamadaDTO.usuario = in.readUTF();
@@ -72,7 +51,8 @@ public class Server {
                     chamadaDTO.operacao = calcularOperacao(chamadaDTO.operacao);
                 }
                 case -1 -> {
-                    if ((chamadaDTO.usuario.equals("wesley") && chamadaDTO.senha.equals("qwe123QWE!@#"))) {
+                    System.out.println(usuarioPresente(chamadaDTO));
+                    if (usuarioPresente(chamadaDTO)) {
                         out.writeByte(1);
                         out.writeBoolean(true);
                         done = true;
@@ -80,7 +60,14 @@ public class Server {
                     else {
                         out.writeByte(1);
                         out.writeBoolean(false);
-                        done = true;
+
+                        out.writeByte(-1);
+                        out.flush();
+
+                        client.close();
+                        server.close();
+
+                        return;
                     }
                 }
             }
